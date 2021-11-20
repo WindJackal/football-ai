@@ -28,7 +28,7 @@ class Data():
     
     def choose_league(self):
         """
-        Returns the individual data of each team in the league as a DataFrame.
+        Updates internal variable self.league for use in data-gathering functions.
         """
         print(f'Leagues: {self.league_names}\n')
         league = input('League: ')
@@ -38,6 +38,9 @@ class Data():
         self.league = league
     
     def get_league_data(self):
+        """
+        Returns data for all teams in the league.
+        """
         if len(self.league) == 0:
             print('You need to choose a league first.\n')
             return None
@@ -53,6 +56,9 @@ class Data():
         return shooting_relevant
     
     def get_match_data(self):
+        """
+        Returns match data for the current season of the chosen league.
+        """
         if len(self.league) == 0:
             print('You need to choose a league first.\n')
             return None
@@ -66,3 +72,12 @@ class Data():
         data.replace([np.inf, -np.inf], np.nan, inplace=True)
         data.dropna(inplace=True)
         return data
+    
+    def get_data(self):
+        """
+        Returns match and team data for use in Predictor class.
+        """
+        self.choose_league()
+        league_data = self.get_league_data()
+        match_data = self.get_match_data()
+        return league_data, match_data
