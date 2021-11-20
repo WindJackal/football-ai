@@ -37,4 +37,15 @@ class Data():
             league = input('League: ')
         self.league = league
     
+    def get_league_data(self):
+        if len(self.league) == 0:
+            print('You need to choose a league first.\n')
+            return None
+        shooting = pd.read_html(self.league_urls[self.league_names.index(self.league)], attrs={'id': 'stats_squads_shooting_for'}, flavor='lxml', header=1)[0]
+        miscellaneous = pd.read_html(self.league_urls[self.league_names.index(self.league)], attrs={'id': 'stats_squads_misc_for'}, flavor='lxml', header=1)[0]
+        shooting_relevant = shooting[['Sh/90', 'SoT/90', 'G/Sh', 'G/SoT']]
+        misc_relevant = miscellaneous[['CrdY', 'CrdR', 'Fls']]
+        for i in misc_relevant.columns:
+            shooting_relevant.insert(len(shooting_relevant.columns), i, misc_relevant.get(i))
+        return shooting_relevant
     
