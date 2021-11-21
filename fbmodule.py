@@ -80,3 +80,21 @@ class Data():
         league_data = self.get_league_data()
         match_data = self.get_match_data()
         return league_data, match_data
+    
+    def select_criterion(self):
+        """
+        Returns the optimal criterion for the chosen league, as defined by trial and error
+        """
+        if self.league in ['Championship', 'Portugal', 'Belgium', '2-Bundesliga', 'Ligue 2', 'Serie A', 'Segunda Division']:
+            criterion = 'gini'
+        else:
+            criterion = 'entropy'
+        return criterion
+
+class Predictor():
+    def __init__(self, team_data, match_data, criterion):
+        self.team_data = team_data
+        self.match_data = match_data
+        self.criterion = criterion
+    
+    
