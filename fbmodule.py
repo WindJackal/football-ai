@@ -100,6 +100,8 @@ class Predictor():
         self.X_test = ''
         self.Y_train = ''
         self.Y_test = ''
+        self.home_teams = []
+        self.away_teams = []
     
     def split_match_data(self):
         """
@@ -149,3 +151,17 @@ class Predictor():
                 best_split = split
         
         return best_depth, best_leaf, best_split
+
+    def get_teams(self):
+        """
+        Loops endlessly to get teams for prediction. Enter 'end' when asked for the next home team to stop the loop.
+        """
+        x = 0
+        while x < 1:
+            home_team = input('Home Team: ')
+            if home_team == 'end':
+                x += 1
+                break
+            away_team = input('Away Team: ')
+            self.home_teams.append(home_team)
+            self.away_teams.append(away_team)
