@@ -194,7 +194,7 @@ class Predictor():
         self.split_match_data()
         self.get_teams()
         depth, leaf, split = self.hyperparameter_filtering()
-        clf = RandomForestClassifier(randome_state=0, criterion=self.criterion, max_depth=depth, min_samples_leaf=leaf, min_samples_split=split)
+        clf = RandomForestClassifier(random_state=0, criterion=self.criterion, max_depth=depth, min_samples_leaf=leaf, min_samples_split=split)
         clf.fit(self.X_train, self.Y_train)
 
         for i in range(len(self.home_teams)):
