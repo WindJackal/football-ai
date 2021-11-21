@@ -79,6 +79,8 @@ class Data():
         self.choose_league()
         league_data = self.get_league_data()
         match_data = self.get_match_data()
+        print('Teams: ')
+        print(np.asarray(league_data.get('Squad')))
         return league_data, match_data
     
     def select_criterion(self):
@@ -187,3 +189,27 @@ class Predictor():
         AGST = at.get('G/SoT').values[0]
 
         return [HS, AS, HST, AST, HY, AY, HR, AR, HF, AF, HGS, AGS, HGST, AGST]
+    
+    def make_prediction(self):
+        self.split_match_data()
+        self.get_teams()
+        depth, leaf, split = self.hyperparameter_filtering()
+        clf = RandomForestClassifier(randome_state=0, criterion=self.criterion, max_depth=depth, min_samples_leaf=leaf, min_samples_split=split)
+        clf.fit(self.X_train, self.Y_train)
+
+        for i in range(len(self.home_teams)):
+            hteam = self.home_teams[i]
+            ateam = self.away_teams[i]
+            data = self.filter_data(hteam, ateam)
+            reshaped = np.asarray(data).reshape(1, -1)
+            result = clf.predict(reshaped)[0]
+            print(f'{hteam} vs {ateam}: {result}')
+            classes = [j for j in clf.classes_]
+            classes.reverse()
+            print(classes)
+            probs = clf.predict_proba(reshaped)[0]
+            proba = [k for k in probs]
+            proba.reverse()
+            odds = [(1/m) for m in proba]
+            print(proba)
+            print(f'Odds: {odds}\n')
