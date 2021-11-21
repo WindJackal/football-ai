@@ -48,12 +48,11 @@ class Data():
         miscellaneous = pd.read_html(self.league_urls[self.league_names.index(self.league)], attrs={'id': 'stats_squads_misc_for'}, flavor='lxml', header=1)[0]
         shooting_relevant = shooting[['Squad', 'Sh/90', 'SoT/90', 'G/Sh', 'G/SoT']]
         misc_relevant = miscellaneous[['CrdY', 'CrdR', 'Fls']]
-        for i in misc_relevant.columns:
-            shooting_relevant.insert(len(shooting_relevant.columns), i, misc_relevant.get(i))
-        shooting_relevant['CrdY'] = round(shooting_relevant['CrdY'] / miscellaneous['90s'], 2)
-        shooting_relevant['CrdR'] = round(shooting_relevant['CrdR'] / miscellaneous['90s'], 2)
-        shooting_relevant['Fls'] = round(shooting_relevant['Fls'] / miscellaneous['90s'], 2)
-        return shooting_relevant
+        df = shooting_relevant.join(misc_relevant)
+        df['CrdY'] = round(df['CrdY'] / miscellaneous['90s'], 2)
+        df['CrdR'] = round(df['CrdR'] / miscellaneous['90s'], 2)
+        df['Fls'] = round(df['Fls'] / miscellaneous['90s'], 2)
+        return df
     
     def get_match_data(self):
         """
