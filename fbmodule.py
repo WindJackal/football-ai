@@ -116,7 +116,6 @@ class Predictor():
         max_depths = list(range(1, 10))
         min_leafs = list(range(1, 10))
         min_splits = list(range(2, 10))
-        accuracy = []
         best_acc = -np.inf
         best_depth = ''
         best_leaf = ''
@@ -165,3 +164,26 @@ class Predictor():
             away_team = input('Away Team: ')
             self.home_teams.append(home_team)
             self.away_teams.append(away_team)
+    
+    def filter_data(self, home, away):
+        """
+        Returns a team's data formatted for prediction.
+        """
+        ht = self.team_data.query(f'Squad == "{home}"')
+        at = self.team_data.query(f'Squad == "{away}"')
+        HS = ht.get('Sh/90').values[0]
+        AS = at.get('Sh/90').values[0]
+        HST = ht.get('SoT/90').values[0]
+        AST = at.get('SoT/90').values[0]
+        HY = ht.get('CrdY').values[0]
+        AY = at.get('CrdY').values[0]
+        HR = ht.get('CrdR').values[0]
+        AR = at.get('CrdR').values[0]
+        HF = ht.get('Fls').values[0]
+        AF = at.get('Fls').values[0]
+        HGS = ht.get('G/Sh').values[0]
+        AGS = at.get('G/Sh').values[0]
+        HGST = ht.get('G/SoT').values[0]
+        AGST = at.get('G/SoT').values[0]
+
+        return [HS, AS, HST, AST, HY, AY, HR, AR, HF, AF, HGS, AGS, HGST, AGST]
