@@ -96,5 +96,56 @@ class Predictor():
         self.team_data = team_data
         self.match_data = match_data
         self.criterion = criterion
+        self.X_train = ''
+        self.X_test = ''
+        self.Y_train = ''
+        self.Y_test = ''
     
+    def split_match_data(self):
+        """
+        Splits match data into training and test sets
+        """
+        self.X_train, self.X_test, self.Y_train, self.Y_test = train_test_split(self.match_data.drop('FTR', axis=1), self.match_data['FTR'], random_state=0)
     
+    def hyperparameter_filtering(self):
+        """
+        Selects the 'best' hyperparameters for the Random Forest, based on a self implemented method
+        """
+        max_depths = list(range(1, 10))
+        min_leafs = list(range(1, 10))
+        min_splits = list(range(2, 10))
+        accuracy = []
+        best_acc = -np.inf
+        best_depth = ''
+        best_leaf = ''
+        best_split = ''
+
+        for depth in max_depths:
+            clf = RandomForestClassifier(max_depth=depth, random_state=0, criterion=self.criterion)
+            clf.fit(self.X_train, self.Y_train)
+            score = clf.score(self.X_test, self.Y_test)
+            if score > best_acc:
+                best_acc = score
+                best_depth = depth
+        
+        best_acc = -np.inf
+
+        for leaf in min_leafs:
+            clf = RandomForestClassifier(max_depth=best_depth, random_state=0, criterion=self.criterion, min_samples_leaf=leaf)
+            clf.fit(self.X_train, self.Y_train)
+            score = clf.score(self.X_test, self.Y_test)
+            if score > best_acc:
+                best_acc = score
+                best_leaf = leaf
+        
+        best_acc = -np.inf
+
+        for split in min_splits:
+            clf = RandomForestClassifier(max_depth=best_depth, random_state=0, criterion=self.criterion, min_samples_leaf=best_leaf, min_samples_split=split)
+            clf.fit(self.X_train, self.Y_train)
+            score = clf.score(self.X_test, self.Y_test)
+            if score > best_acc:
+                best_acc = score
+                best_split = split
+        
+        return best_depth, best_leaf, best_split
